@@ -193,12 +193,15 @@ function renderFAQ(items){
   const open = card.classList.toggle('open');
   head.setAttribute('aria-expanded', open);
 
-  if(open && (item.tags||[]).includes("Cats")){
-    if(!ans.dataset.catLoaded){ loadCatInto(ans); }
+  const hasTag = (tags, name) => (tags||[]).some(t => t.toLowerCase() === name.toLowerCase());
+
+  if(open && hasTag(item.tags,"cats")){
+  if(!ans.dataset.catLoaded){ loadCatInto(ans); }
   }
-  if(open && (item.tags||[]).includes("Dogs")){
+  if(open && hasTag(item.tags,"dogs")){
     if(!ans.dataset.dogLoaded){ loadDogInto(ans); }
   }
+
   }); 
 
 
