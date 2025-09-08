@@ -124,29 +124,32 @@
 
   <script>
     // --- CONFIG ------------------------------------------------------------
-    const CONFIG = {
-      trip: {
-        title: "Trip Q&A",
-        dates: "2025-10-02 → 2025-10-12", // edit
-        location: "Tokyo & Kyoto",        // edit
-      },
-      contact: {
-        // Replace with your repo issues URL or a Google Form. Fallback to mailto.
-        issuesUrl: "", // e.g., "https://github.com/username/repo/issues/new?template=question.md&title=Question:%20"
-        mailto: "mailto:you@example.com?subject=Trip%20Question&body=Hi%20Tom,%5Cn%5BWrite%20your%20question%20here%5D",
-      },
-      tags: ["flights","housing","itinerary","money","packing","safety","sim/eSIM","transport"],
-      faqs: [
-        { q: "Exact dates and cities?", a: "Arrive Oct 2 in Tokyo. Bullet train to Kyoto on Oct 7. Fly home Oct 12.", tags:["itinerary"] },
-        { q: "Which flights are we on?", a: "LOT LO276 VNO→WAW 06:15, then LO079 WAW→NRT 10:40. Return JAL JL415 NRT→CDG then AF1446 CDG→VNO.", tags:["flights"] },
-        { q: "Where are we staying?", a: "Tokyo: Hotel Niwa 10/2–10/7. Kyoto: The General Kyoto 10/7–10/12.", tags:["housing"] },
-        { q: "How do we get mobile data?", a: "Buy an eSIM in Airalo (Japan Mobi or Sakura plans). Activate on Wi‑Fi on arrival.", tags:["sim/eSIM","money"] },
-        { q: "Money and cards?", a: "Cards work almost everywhere. Keep some cash for small shops. Use 7‑Eleven ATMs for best rates.", tags:["money"] },
-        { q: "Local transport?", a: "Get a Suica in Apple/Google Wallet. Top up at stations. Use Shinkansen for Tokyo↔Kyoto.", tags:["transport"] },
-        { q: "Is tap water safe?", a: "Yes, safe in both cities.", tags:["safety"] },
-        { q: "What to pack?", a: "Light layers, comfortable shoes, compact umbrella. Power: Type A (US) plug.", tags:["packing"] },
-      ]
-    };
+const CONFIG = {
+  trip: {
+    title: "Winter Winteruz Trip To Kalnuz",
+    dates: "2025-12-28 → 2026-01-03 (tentative)",
+    location: "Poland or Slovakia/Slovenia (TBD)",
+  },
+  contact: {
+    issuesUrl: "",
+    mailto: "mailto:tomas@jurkevicius.lt?subject=Trip%20Question&body=Hi%20Tom,%5Cn%5BWrite%20your%20question%20here%5D",
+  },
+  tags: ["itinerary","driving","housing","money","packing","safety","skiing","gear","transport"],
+  faqs: [
+    { q: "Exact dates and destination?", a: "Target 2025-12-28 → 2026-01-03. Destination will be Poland or Slovakia/Slovenia. Final decision pending.", tags:["itinerary"] },
+    { q: "Who is going and how many cars?", a: "Group: Tomas Jurk, Fausta Kuz, Rokas Jurk, Aiste Kazl, Tomas Ram. Two cars if all five go. Tomas Jr car has a roof rack and ski pass-through; others can rent racks if needed.", tags:["driving","gear"] },
+    { q: "Flights?", a: "None. We are driving in two cars if group of five.", tags:["driving"] },
+    { q: "Route and road details?", a: "TBA after destination selection.", tags:["driving","itinerary"] },
+    { q: "Lodging?", a: "TBA. Will start looking for a place and resort after agreement.", tags:["housing","itinerary"] },
+    { q: "Ski resort plan?", a: "TBA. Search begins once country and dates are confirmed.", tags:["skiing","itinerary"] },
+    { q: "Lessons or prior experience?", a: "Optional practice session at Liepkalnis before the trip.", tags:["skiing","safety"] },
+    { q: "Gear and packing?", a: "Winter clothing for skiing/snowboarding. Helmets recommended. Rent skis/boards/boots on site.", tags:["gear","packing","safety"] },
+    { q: "Local transport?", a: "Will be booked on site as needed.", tags:["transport"] },
+    { q: "Mobile data?", a: "Covered within current plans; no special eSIM needed based on current assumptions.", tags:["money"] },
+    { q: "Money and cards?", a: "Revolut card available and should work. Carry some cash if useful locally.", tags:["money"] },
+    { q: "Safety/health?", a: "Standard winter driving care. Helmets on slopes. Emergency numbers and insurance details to be added after destination is fixed.", tags:["safety"] },
+  ]
+};
 
     // --- UTILS -------------------------------------------------------------
     const $ = (s,root=document)=>root.querySelector(s);
