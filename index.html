@@ -1,3 +1,6 @@
+Updated file with Cat API wired to the “cats” FAQ. Clicking the “Cats?” card loads a cat image inside its answer. A “New cat” button fetches another.
+
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -10,16 +13,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg: #0b1020;        /* page background */
-      --panel: #0f172a;     /* card background */
-      --muted: #94a3b8;     /* secondary text */
-      --text: #e2e8f0;      /* primary text */
-      --accent: #22d3ee;    /* cyan */
-      --accent-2: #60a5fa;  /* blue */
-      --ring: #38bdf8;      /* focus */
-      --ok: #34d399;        /* green */
-      --warn: #fbbf24;      /* amber */
-      --danger: #f87171;    /* red */
+      --bg: #0b1020;
+      --panel: #0f172a;
+      --muted: #94a3b8;
+      --text: #e2e8f0;
+      --accent: #22d3ee;
+      --accent-2: #60a5fa;
+      --ring: #38bdf8;
+      --ok: #34d399;
+      --warn: #fbbf24;
+      --danger: #f87171;
       --radius: 16px;
       --shadow: 0 10px 30px rgba(2,8,23,.45);
       --shadow-soft: 0 6px 20px rgba(2,8,23,.35);
@@ -33,9 +36,7 @@
     }
     a{ color: var(--accent); text-decoration: none; }
     a:hover{ text-decoration: underline; }
-    header{
-      position:relative; padding:56px 20px 24px; text-align:center;
-    }
+    header{ position:relative; padding:56px 20px 24px; text-align:center; }
     .hero{
       max-width:960px; margin:0 auto; padding:24px; border-radius:var(--radius);
       background: linear-gradient(180deg, rgba(34,211,238,.08), rgba(96,165,250,.08));
@@ -71,17 +72,12 @@
     .a{ padding:0 16px 16px; display:none; color:var(--muted)}
     .card.open .a{ display:block }
 
-    .foot{
-      max-width:960px; margin:24px auto; padding:12px 20px; color:var(--muted); text-align:center; font-size:14px
-    }
-
+    .foot{ max-width:960px; margin:24px auto; padding:12px 20px; color:var(--muted); text-align:center; font-size:14px }
     .filters{ display:flex; flex-wrap:wrap; gap:8px; padding:10px 0 2px }
     .chip{ font-size:13px; padding:6px 10px; border:1px solid rgba(148,163,184,.22); border-radius:999px; cursor:pointer; background:#0b1326; color:var(--text) }
     .chip.active{ border-color:var(--ring); box-shadow: 0 0 0 3px rgba(56,189,248,.15); }
-
     .empty{ display:none; padding:24px; text-align:center; color:var(--muted) }
     .empty.show{ display:block }
-
     .ask{ margin-left:auto }
   </style>
 </head>
@@ -119,174 +115,204 @@
     <span>Built for friends. Private by design. No trackers.</span>
   </footer>
 
-  <!-- Structured data for better sharing/SEO -->
   <script type="application/ld+json" id="schema"></script>
 
   <script>
-    // --- CONFIG ------------------------------------------------------------
+/* ---------------- CONFIG ---------------- */
 const CONFIG = {
   trip: {
     title: "Winter Winteruz Trip To Kalnuz",
-    dates: "2025-12-28 → 2026-01-03 (tentative)",
-    location: "Poland or Slovakia/Slovenia (TBD)",
+    dates: "2025-12-28 → 2026-01-03",
+    location: "Poland or Slovakia",
   },
   contact: {
     issuesUrl: "",
     mailto: "mailto:tomas@jurkevicius.lt?subject=Trip%20Question&body=Hi%20Tom,%5Cn%5BWrite%20your%20question%20here%5D",
   },
-  tags: ["itinerary","driving","housing","money","packing","safety","skiing","gear","transport"],
+  tags: ["itinerary","driving","gear","safety","cats"],
   faqs: [
-    { q: "Exact dates and destination?", a: "Target 2025-12-28 → 2026-01-03. Destination will be Poland or Slovakia/Slovenia. Final decision pending.", tags:["itinerary"] },
-    { q: "Who is going and how many cars?", a: "Group: Tomas Jurk, Fausta Kuz, Rokas Jurk, Aiste Kazl, Tomas Ram. Two cars if all five go. Tomas Jr car has a roof rack and ski pass-through; others can rent racks if needed.", tags:["driving","gear"] },
-    { q: "Flights?", a: "None. We are driving in two cars if group of five.", tags:["driving"] },
-    { q: "Route and road details?", a: "TBA after destination selection.", tags:["driving","itinerary"] },
-    { q: "Lodging?", a: "TBA. Will start looking for a place and resort after agreement.", tags:["housing","itinerary"] },
-    { q: "Ski resort plan?", a: "TBA. Search begins once country and dates are confirmed.", tags:["skiing","itinerary"] },
-    { q: "Lessons or prior experience?", a: "Optional practice session at Liepkalnis before the trip.", tags:["skiing","safety"] },
-    { q: "Gear and packing?", a: "Winter clothing for skiing/snowboarding. Helmets recommended. Rent skis/boards/boots on site.", tags:["gear","packing","safety"] },
-    { q: "Local transport?", a: "Will be booked on site as needed.", tags:["transport"] },
-    { q: "Mobile data?", a: "Covered within current plans; no special eSIM needed based on current assumptions.", tags:["money"] },
-    { q: "Money and cards?", a: "Revolut card available and should work. Carry some cash if useful locally.", tags:["money"] },
-    { q: "Safety/health?", a: "Standard winter driving care. Helmets on slopes. Emergency numbers and insurance details to be added after destination is fixed.", tags:["safety"] },
-  ]
+    { q: "Why Poland or Slovakia?", a: "Italy is hosting the Olympics so prices are high. Poland/Slovakia offer a big cost drop for five people driving instead of flights.", tags:["itinerary"] },
+    { q: "How are we going?", a: "By car. Two cars for five people. One car can carry gear, the other can focus on passengers. Roof rack and ski bag available for equipment.", tags:["driving","gear"] },
+    { q: "Not experienced in skiing?", a: "No problem. We can schedule a couple of sessions at Liepkalnis before the trip.", tags:["safety"] },
+    { q: "Cats?", a: "Suradau gera puslapi kur galima pasiziuret kates", tags:["cats"] }
+  ],
+  catApiKey: "live_16Hv1o9LsN15pMRvCTfrtutpPBF3QcJA3gcWuciia9DFN9FjOdJvPyM8o072Ogd4"
 };
 
-    // --- UTILS -------------------------------------------------------------
-    const $ = (s,root=document)=>root.querySelector(s);
-    const $$ = (s,root=document)=>Array.from(root.querySelectorAll(s));
-    const escape = s => s.replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* ---------------- UTILS ---------------- */
+const $ = (s,root=document)=>root.querySelector(s);
+const $$ = (s,root=document)=>Array.from(root.querySelectorAll(s));
+const escape = s => s.replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-    // --- STATE -------------------------------------------------------------
-    let activeTag = null;
+/* ---------------- STATE ---------------- */
+let activeTag = null;
 
-    // --- RENDER ------------------------------------------------------------
-    function renderMeta(){
-      $("#tripDates").textContent = `Dates: ${CONFIG.trip.dates}`;
-      $("#tripLocation").textContent = `Location: ${CONFIG.trip.location}`;
-      const d = new Date();
-      $("#lastUpdated").textContent = `Updated: ${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-      document.title = CONFIG.trip.title || "Trip Q&A";
-      $("h1").textContent = CONFIG.trip.title || "Trip Q&A";
-    }
+/* ---------------- RENDER ---------------- */
+function renderMeta(){
+  $("#tripDates").textContent = `Dates: ${CONFIG.trip.dates}`;
+  $("#tripLocation").textContent = `Location: ${CONFIG.trip.location}`;
+  const d = new Date();
+  $("#lastUpdated").textContent = `Updated: ${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  document.title = CONFIG.trip.title || "Trip Q&A";
+  $("h1").textContent = CONFIG.trip.title || "Trip Q&A";
+}
 
-    function renderFilters(){
-      const wrap = $("#filters");
-      wrap.innerHTML = '';
-      const all = document.createElement('button');
-      all.className = 'chip' + (!activeTag ? ' active' : '');
-      all.textContent = 'all';
-      all.onclick = ()=>{ activeTag=null; render(); };
-      wrap.appendChild(all);
-      CONFIG.tags.forEach(t=>{
-        const b = document.createElement('button');
-        b.className = 'chip' + (activeTag===t ? ' active' : '');
-        b.textContent = t;
-        b.onclick = ()=>{ activeTag = activeTag===t? null : t; render(); };
-        wrap.appendChild(b);
-      });
-    }
+function renderFilters(){
+  const wrap = $("#filters");
+  wrap.innerHTML = '';
+  const all = document.createElement('button');
+  all.className = 'chip' + (!activeTag ? ' active' : '');
+  all.textContent = 'all';
+  all.onclick = ()=>{ activeTag=null; render(); };
+  wrap.appendChild(all);
+  CONFIG.tags.forEach(t=>{
+    const b = document.createElement('button');
+    b.className = 'chip' + (activeTag===t ? ' active' : '');
+    b.textContent = t;
+    b.onclick = ()=>{ activeTag = activeTag===t? null : t; render(); };
+    wrap.appendChild(b);
+  });
+}
 
-    function renderFAQ(items){
-      const list = $("#faq");
-      list.innerHTML = '';
-      items.forEach((item, idx)=>{
-        const card = document.createElement('article');
-        card.className = 'card';
-        card.innerHTML = `
-          <div class="q" role="button" aria-expanded="false" aria-controls="a-${idx}">
-            <h3>${escape(item.q)}</h3>
-            ${item.tags && item.tags[0] ? `<span class="tag">${escape(item.tags[0])}</span>` : ''}
-          </div>
-          <div class="a" id="a-${idx}">${escape(item.a)}</div>
-        `;
-        const head = $(".q", card);
-        const ans = $(".a", card);
-        head.addEventListener('click', ()=>{
-          const open = card.classList.toggle('open');
-          head.setAttribute('aria-expanded', open);
-        });
-        list.appendChild(card);
-      });
-      $("#empty").classList.toggle('show', items.length===0);
-      updateSchema(items);
-    }
+function renderFAQ(items){
+  const list = $("#faq");
+  list.innerHTML = '';
+  items.forEach((item, idx)=>{
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="q" role="button" aria-expanded="false" aria-controls="a-${idx}">
+        <h3>${escape(item.q)}</h3>
+        ${item.tags && item.tags[0] ? `<span class="tag">${escape(item.tags[0])}</span>` : ''}
+      </div>
+      <div class="a" id="a-${idx}">${escape(item.a)}</div>
+    `;
+    const head = $(".q", card);
+    const ans = $(".a", card);
 
-    function updateSchema(items){
-      const data = {
-        '@context':'https://schema.org',
-        '@type':'FAQPage',
-        'mainEntity': items.map(it=>({
-          '@type':'Question',
-          'name': it.q,
-          'acceptedAnswer': { '@type':'Answer', 'text': it.a }
-        }))
-      };
-      $("#schema").textContent = JSON.stringify(data);
-    }
+    head.addEventListener('click', ()=>{
+      const open = card.classList.toggle('open');
+      head.setAttribute('aria-expanded', open);
 
-    // --- SEARCH ------------------------------------------------------------
-    function normalize(s){ return s.toLowerCase().normalize('NFKD'); }
-    function filterItems(term){
-      const t = normalize(term);
-      return CONFIG.faqs.filter(it=>{
-        const inTag = !activeTag || (it.tags||[]).includes(activeTag);
-        if(!inTag) return false;
-        if(!t) return true;
-        return normalize(it.q+" "+it.a+" "+(it.tags||[]).join(" ")).includes(t);
-      });
-    }
-
-    // --- ACTIONS -----------------------------------------------------------
-    function copyLink(){
-      navigator.clipboard.writeText(location.href).then(()=>{
-        flash('Link copied');
-      }).catch(()=>{
-        flash('Copy failed', true);
-      });
-    }
-    function ask(){
-      const base = CONFIG.contact.issuesUrl || CONFIG.contact.mailto;
-      const q = prompt('Type your question');
-      if(!q) return;
-      let url = base;
-      if(CONFIG.contact.issuesUrl){
-        url += encodeURIComponent(q);
-      }else if(/^mailto:/.test(base)){
-        url = base.replace('Trip%20Question', 'Trip%20Question%3A%20'+encodeURIComponent(q));
-      }
-      location.href = url;
-    }
-    function flash(msg, isErr){
-      const el = document.createElement('div');
-      el.textContent = msg; el.style.position='fixed'; el.style.right='16px'; el.style.bottom='16px'; el.style.padding='10px 12px';
-      el.style.background = isErr? 'linear-gradient(180deg,#3b0d12,#1a0a0a)': 'linear-gradient(180deg,#063a2f,#061a17)';
-      el.style.border = '1px solid rgba(148,163,184,.25)'; el.style.borderRadius='10px'; el.style.color='var(--text)'; el.style.boxShadow='var(--shadow-soft)';
-      document.body.appendChild(el); setTimeout(()=>el.remove(), 1800);
-    }
-
-    // --- INIT --------------------------------------------------------------
-    function render(){
-      renderFilters();
-      const term = $("#search").value;
-      const items = filterItems(term);
-      renderFAQ(items);
-    }
-
-    window.addEventListener('DOMContentLoaded', ()=>{
-      renderMeta();
-      render();
-      $('#copyLink').addEventListener('click', copyLink);
-      $('#askBtn').addEventListener('click', ask);
-      $('#search').addEventListener('input', render);
-      document.addEventListener('keydown', (e)=>{
-        if(e.key === '/'){ e.preventDefault(); $('#search').focus(); }
-      });
-
-      // Simple offline support
-      if('serviceWorker' in navigator){
-        try{ navigator.serviceWorker.register(URL.createObjectURL(new Blob([`self.addEventListener('install',e=>{e.waitUntil(caches.open('tripqa-v1').then(c=>c.addAll(['./'])))});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`],{type:'text/javascript'}))); }catch(e){}
+      // Load cat on first open of a cats-tagged item
+      if(open && (item.tags||[]).includes("cats")){
+        if(!ans.dataset.catLoaded){
+          loadCatInto(ans);
+          ans.dataset.catLoaded = "1";
+        }
       }
     });
+
+    list.appendChild(card);
+  });
+  $("#empty").classList.toggle('show', items.length===0);
+  updateSchema(items);
+}
+
+function updateSchema(items){
+  const data = {
+    '@context':'https://schema.org',
+    '@type':'FAQPage',
+    'mainEntity': items.map(it=>({
+      '@type':'Question',
+      'name': it.q,
+      'acceptedAnswer': { '@type':'Answer', 'text': it.a }
+    }))
+  };
+  $("#schema").textContent = JSON.stringify(data);
+}
+
+/* ---------------- SEARCH ---------------- */
+function normalize(s){ return s.toLowerCase().normalize('NFKD'); }
+function filterItems(term){
+  const t = normalize(term);
+  return CONFIG.faqs.filter(it=>{
+    const inTag = !activeTag || (it.tags||[]).includes(activeTag);
+    if(!inTag) return false;
+    if(!t) return true;
+    return normalize(it.q+" "+it.a+" "+(it.tags||[]).join(" ")).includes(t);
+  });
+}
+
+/* ---------------- ACTIONS ---------------- */
+function copyLink(){
+  navigator.clipboard.writeText(location.href).then(()=>{ flash('Link copied'); })
+  .catch(()=>{ flash('Copy failed', true); });
+}
+function ask(){
+  const base = CONFIG.contact.issuesUrl || CONFIG.contact.mailto;
+  const q = prompt('Type your question');
+  if(!q) return;
+  let url = base;
+  if(CONFIG.contact.issuesUrl){
+    url += encodeURIComponent(q);
+  }else if(/^mailto:/.test(base)){
+    url = base.replace('Trip%20Question', 'Trip%20Question%3A%20'+encodeURIComponent(q));
+  }
+  location.href = url;
+}
+function flash(msg, isErr){
+  const el = document.createElement('div');
+  el.textContent = msg; el.style.position='fixed'; el.style.right='16px'; el.style.bottom='16px'; el.style.padding='10px 12px';
+  el.style.background = isErr? 'linear-gradient(180deg,#3b0d12,#1a0a0a)': 'linear-gradient(180deg,#063a2f,#061a17)';
+  el.style.border = '1px solid rgba(148,163,184,.25)'; el.style.borderRadius='10px'; el.style.color='var(--text)'; el.style.boxShadow='var(--shadow-soft)';
+  document.body.appendChild(el); setTimeout(()=>el.remove(), 1800);
+}
+
+/* ---------------- CAT API ---------------- */
+async function loadCatInto(container){
+  container.innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin:8px 0 12px">
+    <span>Loading cat…</span>
+  </div>`;
+  try{
+    const headers = { "Accept": "application/json" };
+    if (CONFIG.catApiKey) headers["x-api-key"] = CONFIG.catApiKey;
+    const res = await fetch("https://api.thecatapi.com/v1/images/search", { headers });
+    const data = await res.json();
+    const url = data && data[0] && data[0].url ? data[0].url : null;
+    if(!url) throw new Error("No image");
+    container.innerHTML = `
+      <div style="display:flex;justify-content:center">
+        <img src="${url}" alt="Cat" style="max-width:100%;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.3)">
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn" id="nextCatBtn">New cat</button>
+      </div>`;
+    const btn = container.querySelector('#nextCatBtn');
+    btn.addEventListener('click', ()=> loadCatInto(container));
+  }catch(e){
+    container.innerHTML = `<span style="color:var(--muted)">Failed to load cat.</span>
+      <div style="margin-top:8px"><button class="btn" id="retryCatBtn">Retry</button></div>`;
+    const rb = container.querySelector('#retryCatBtn');
+    rb.addEventListener('click', ()=> loadCatInto(container));
+  }
+}
+
+/* ---------------- INIT ---------------- */
+function render(){
+  renderFilters();
+  const term = $("#search").value;
+  const items = filterItems(term);
+  renderFAQ(items);
+}
+
+window.addEventListener('DOMContentLoaded', ()=>{
+  renderMeta();
+  render();
+  $('#copyLink').addEventListener('click', copyLink);
+  $('#askBtn').addEventListener('click', ask);
+  $('#search').addEventListener('input', render);
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === '/'){ e.preventDefault(); $('#search').focus(); }
+  });
+
+  if('serviceWorker' in navigator){
+    try{
+      navigator.serviceWorker.register('./sw.js');
+    }catch(e){}
+  }
+});
   </script>
 </body>
 </html>
+```
