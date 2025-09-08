@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trip Q&A</title>
+  <meta name="description" content="Quick answers for friends about the upcoming trip." />
+  <meta name="theme-color" content="#0ea5e9">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #0b1020;        /* page background */
+      --panel: #0f172a;     /* card background */
+      --muted: #94a3b8;     /* secondary text */
+      --text: #e2e8f0;      /* primary text */
+      --accent: #22d3ee;    /* cyan */
+      --accent-2: #60a5fa;  /* blue */
+      --ring: #38bdf8;      /* focus */
+      --ok: #34d399;        /* green */
+      --warn: #fbbf24;      /* amber */
+      --danger: #f87171;    /* red */
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(2,8,23,.45);
+      --shadow-soft: 0 6px 20px rgba(2,8,23,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text); background: radial-gradient(1200px 800px at 10% -10%, #0b2540 0%, var(--bg) 55%), radial-gradient(900px 600px at 100% -20%, #111b3a 0%, transparent 60%), var(--bg);
+      line-height:1.6;
+    }
+    a{ color: var(--accent); text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+    header{
+      position:relative; padding:56px 20px 24px; text-align:center;
+    }
+    .hero{
+      max-width:960px; margin:0 auto; padding:24px; border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(34,211,238,.08), rgba(96,165,250,.08));
+      border: 1px solid rgba(148,163,184,.15); box-shadow: var(--shadow);
+    }
+    h1{font-size: clamp(28px, 4vw, 40px); margin:0 0 10px; letter-spacing:.2px}
+    .sub{ color: var(--muted); margin:0 auto 16px; max-width:780px; }
+    .meta{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; color:var(--muted); font-size:14px }
+    .pill{ padding:6px 10px; border:1px solid rgba(148,163,184,.18); border-radius:999px; background:rgba(15,23,42,.6) }
+
+    .toolbar{ position:sticky; top:0; backdrop-filter:saturate(150%) blur(8px); background: rgba(11,16,32,.75); border-bottom:1px solid rgba(148,163,184,.12); z-index:100; }
+    .toolbar-inner{ max-width:960px; margin:0 auto; display:flex; gap:12px; align-items:center; padding:12px 20px; }
+    .search{ flex:1; position:relative }
+    .search input{
+      width:100%; padding:12px 40px 12px 14px; border-radius:12px; border:1px solid rgba(148,163,184,.22);
+      background:linear-gradient(180deg, rgba(30,41,59,.7), rgba(17,24,39,.7)); color:var(--text);
+      outline:none; box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .search input:focus{ border-color: var(--ring); box-shadow: 0 0 0 4px rgba(56,189,248,.15); }
+    .search .kbd{ position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:12px; color:var(--muted); border:1px solid rgba(148,163,184,.25); border-radius:6px; padding:2px 6px; background:#0b1325; }
+    .btn{ display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(148,163,184,.22); background:linear-gradient(180deg, #0f192e, #0b1326); color:var(--text); padding:10px 12px; border-radius:12px; cursor:pointer }
+    .btn:hover{ border-color:rgba(148,163,184,.35) }
+
+    main{ max-width:960px; margin:22px auto 80px; padding:0 20px; }
+    .grid{ display:grid; grid-template-columns:1fr; gap:14px; }
+    @media(min-width:780px){ .grid{ grid-template-columns:1fr 1fr; } }
+
+    .card{ border:1px solid rgba(148,163,184,.18); background:linear-gradient(180deg, rgba(17,24,39,.88), rgba(2,6,23,.88)); border-radius:var(--radius); box-shadow:var(--shadow-soft); overflow:hidden }
+    .q{ display:flex; align-items:flex-start; gap:10px; padding:16px 16px 10px; cursor:pointer; }
+    .q h3{ margin:0; font-size:18px; line-height:1.35 }
+    .tag{ font-size:12px; color:#0a0a0a; background:linear-gradient(180deg, var(--accent), var(--accent-2)); padding:4px 8px; border-radius:999px; font-weight:600 }
+    .q .tag{ margin-left:auto }
+    .a{ padding:0 16px 16px; display:none; color:var(--muted)}
+    .card.open .a{ display:block }
+
+    .foot{
+      max-width:960px; margin:24px auto; padding:12px 20px; color:var(--muted); text-align:center; font-size:14px
+    }
+
+    .filters{ display:flex; flex-wrap:wrap; gap:8px; padding:10px 0 2px }
+    .chip{ font-size:13px; padding:6px 10px; border:1px solid rgba(148,163,184,.22); border-radius:999px; cursor:pointer; background:#0b1326; color:var(--text) }
+    .chip.active{ border-color:var(--ring); box-shadow: 0 0 0 3px rgba(56,189,248,.15); }
+
+    .empty{ display:none; padding:24px; text-align:center; color:var(--muted) }
+    .empty.show{ display:block }
+
+    .ask{ margin-left:auto }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hero">
+      <h1>Trip Q&A</h1>
+      <p class="sub">Fast answers for friends. Search below or open a question. This page is lightweight, mobile-first, and works offline after first load.</p>
+      <div class="meta">
+        <div class="pill" id="tripDates">Dates: set in config</div>
+        <div class="pill" id="tripLocation">Location: set in config</div>
+        <div class="pill" id="lastUpdated">Updated: today</div>
+      </div>
+      <div class="filters" id="filters"></div>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="toolbar-inner">
+      <div class="search">
+        <input id="search" type="search" placeholder="Search questions ( / )" aria-label="Search questions" autocomplete="off" />
+        <span class="kbd">/</span>
+      </div>
+      <button class="btn ask" id="askBtn" title="Ask a new question">✉️ Ask</button>
+      <button class="btn" id="copyLink" title="Copy page link">🔗 Copy</button>
+    </div>
+  </div>
+
+  <main>
+    <section class="grid" id="faq"></section>
+    <div id="empty" class="empty">No results. Clear filters or try another term.</div>
+  </main>
+
+  <footer class="foot">
+    <span>Built for friends. Private by design. No trackers.</span>
+  </footer>
+
+  <!-- Structured data for better sharing/SEO -->
+  <script type="application/ld+json" id="schema"></script>
+
+  <script>
+    // --- CONFIG ------------------------------------------------------------
+    const CONFIG = {
+      trip: {
+        title: "Trip Q&A",
+        dates: "2025-10-02 → 2025-10-12", // edit
+        location: "Tokyo & Kyoto",        // edit
+      },
+      contact: {
+        // Replace with your repo issues URL or a Google Form. Fallback to mailto.
+        issuesUrl: "", // e.g., "https://github.com/username/repo/issues/new?template=question.md&title=Question:%20"
+        mailto: "mailto:you@example.com?subject=Trip%20Question&body=Hi%20Tom,%5Cn%5BWrite%20your%20question%20here%5D",
+      },
+      tags: ["flights","housing","itinerary","money","packing","safety","sim/eSIM","transport"],
+      faqs: [
+        { q: "Exact dates and cities?", a: "Arrive Oct 2 in Tokyo. Bullet train to Kyoto on Oct 7. Fly home Oct 12.", tags:["itinerary"] },
+        { q: "Which flights are we on?", a: "LOT LO276 VNO→WAW 06:15, then LO079 WAW→NRT 10:40. Return JAL JL415 NRT→CDG then AF1446 CDG→VNO.", tags:["flights"] },
+        { q: "Where are we staying?", a: "Tokyo: Hotel Niwa 10/2–10/7. Kyoto: The General Kyoto 10/7–10/12.", tags:["housing"] },
+        { q: "How do we get mobile data?", a: "Buy an eSIM in Airalo (Japan Mobi or Sakura plans). Activate on Wi‑Fi on arrival.", tags:["sim/eSIM","money"] },
+        { q: "Money and cards?", a: "Cards work almost everywhere. Keep some cash for small shops. Use 7‑Eleven ATMs for best rates.", tags:["money"] },
+        { q: "Local transport?", a: "Get a Suica in Apple/Google Wallet. Top up at stations. Use Shinkansen for Tokyo↔Kyoto.", tags:["transport"] },
+        { q: "Is tap water safe?", a: "Yes, safe in both cities.", tags:["safety"] },
+        { q: "What to pack?", a: "Light layers, comfortable shoes, compact umbrella. Power: Type A (US) plug.", tags:["packing"] },
+      ]
+    };
+
+    // --- UTILS -------------------------------------------------------------
+    const $ = (s,root=document)=>root.querySelector(s);
+    const $$ = (s,root=document)=>Array.from(root.querySelectorAll(s));
+    const escape = s => s.replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+    // --- STATE -------------------------------------------------------------
+    let activeTag = null;
+
+    // --- RENDER ------------------------------------------------------------
+    function renderMeta(){
+      $("#tripDates").textContent = `Dates: ${CONFIG.trip.dates}`;
+      $("#tripLocation").textContent = `Location: ${CONFIG.trip.location}`;
+      const d = new Date();
+      $("#lastUpdated").textContent = `Updated: ${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      document.title = CONFIG.trip.title || "Trip Q&A";
+      $("h1").textContent = CONFIG.trip.title || "Trip Q&A";
+    }
+
+    function renderFilters(){
+      const wrap = $("#filters");
+      wrap.innerHTML = '';
+      const all = document.createElement('button');
+      all.className = 'chip' + (!activeTag ? ' active' : '');
+      all.textContent = 'all';
+      all.onclick = ()=>{ activeTag=null; render(); };
+      wrap.appendChild(all);
+      CONFIG.tags.forEach(t=>{
+        const b = document.createElement('button');
+        b.className = 'chip' + (activeTag===t ? ' active' : '');
+        b.textContent = t;
+        b.onclick = ()=>{ activeTag = activeTag===t? null : t; render(); };
+        wrap.appendChild(b);
+      });
+    }
+
+    function renderFAQ(items){
+      const list = $("#faq");
+      list.innerHTML = '';
+      items.forEach((item, idx)=>{
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="q" role="button" aria-expanded="false" aria-controls="a-${idx}">
+            <h3>${escape(item.q)}</h3>
+            ${item.tags && item.tags[0] ? `<span class="tag">${escape(item.tags[0])}</span>` : ''}
+          </div>
+          <div class="a" id="a-${idx}">${escape(item.a)}</div>
+        `;
+        const head = $(".q", card);
+        const ans = $(".a", card);
+        head.addEventListener('click', ()=>{
+          const open = card.classList.toggle('open');
+          head.setAttribute('aria-expanded', open);
+        });
+        list.appendChild(card);
+      });
+      $("#empty").classList.toggle('show', items.length===0);
+      updateSchema(items);
+    }
+
+    function updateSchema(items){
+      const data = {
+        '@context':'https://schema.org',
+        '@type':'FAQPage',
+        'mainEntity': items.map(it=>({
+          '@type':'Question',
+          'name': it.q,
+          'acceptedAnswer': { '@type':'Answer', 'text': it.a }
+        }))
+      };
+      $("#schema").textContent = JSON.stringify(data);
+    }
+
+    // --- SEARCH ------------------------------------------------------------
+    function normalize(s){ return s.toLowerCase().normalize('NFKD'); }
+    function filterItems(term){
+      const t = normalize(term);
+      return CONFIG.faqs.filter(it=>{
+        const inTag = !activeTag || (it.tags||[]).includes(activeTag);
+        if(!inTag) return false;
+        if(!t) return true;
+        return normalize(it.q+" "+it.a+" "+(it.tags||[]).join(" ")).includes(t);
+      });
+    }
+
+    // --- ACTIONS -----------------------------------------------------------
+    function copyLink(){
+      navigator.clipboard.writeText(location.href).then(()=>{
+        flash('Link copied');
+      }).catch(()=>{
+        flash('Copy failed', true);
+      });
+    }
+    function ask(){
+      const base = CONFIG.contact.issuesUrl || CONFIG.contact.mailto;
+      const q = prompt('Type your question');
+      if(!q) return;
+      let url = base;
+      if(CONFIG.contact.issuesUrl){
+        url += encodeURIComponent(q);
+      }else if(/^mailto:/.test(base)){
+        url = base.replace('Trip%20Question', 'Trip%20Question%3A%20'+encodeURIComponent(q));
+      }
+      location.href = url;
+    }
+    function flash(msg, isErr){
+      const el = document.createElement('div');
+      el.textContent = msg; el.style.position='fixed'; el.style.right='16px'; el.style.bottom='16px'; el.style.padding='10px 12px';
+      el.style.background = isErr? 'linear-gradient(180deg,#3b0d12,#1a0a0a)': 'linear-gradient(180deg,#063a2f,#061a17)';
+      el.style.border = '1px solid rgba(148,163,184,.25)'; el.style.borderRadius='10px'; el.style.color='var(--text)'; el.style.boxShadow='var(--shadow-soft)';
+      document.body.appendChild(el); setTimeout(()=>el.remove(), 1800);
+    }
+
+    // --- INIT --------------------------------------------------------------
+    function render(){
+      renderFilters();
+      const term = $("#search").value;
+      const items = filterItems(term);
+      renderFAQ(items);
+    }
+
+    window.addEventListener('DOMContentLoaded', ()=>{
+      renderMeta();
+      render();
+      $('#copyLink').addEventListener('click', copyLink);
+      $('#askBtn').addEventListener('click', ask);
+      $('#search').addEventListener('input', render);
+      document.addEventListener('keydown', (e)=>{
+        if(e.key === '/'){ e.preventDefault(); $('#search').focus(); }
+      });
+
+      // Simple offline support
+      if('serviceWorker' in navigator){
+        try{ navigator.serviceWorker.register(URL.createObjectURL(new Blob([`self.addEventListener('install',e=>{e.waitUntil(caches.open('tripqa-v1').then(c=>c.addAll(['./'])))});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`],{type:'text/javascript'}))); }catch(e){}
+      }
+    });
+  </script>
+</body>
+</html>
