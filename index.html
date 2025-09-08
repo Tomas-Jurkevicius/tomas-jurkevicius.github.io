@@ -126,7 +126,7 @@ const CONFIG = {
     issuesUrl: "",
     mailto: "mailto:tomas@jurkevicius.lt?subject=Trip%20Question&body=Hi%20Tom,%5Cn%5BWrite%20your%20question%20here%5D",
   },
-  tags: ["itinerary","driving","gear","safety","dogs","cats"],
+  tags: ["Itinerary","Driving","Gear","Safety","Dogs","Cats"],
   faqs: [
     { q: "Why Poland or Slovakia?", a: "Italy is hosting the Olympics so prices are high. Poland/Slovakia offer a big cost drop for five people driving instead of flights.", tags:["itinerary"] },
     { q: "How are we going?", a: "By car. Two cars for five people. One car can carry gear, the other can focus on passengers. Roof rack and ski bag available for equipment.", tags:["driving","gear"] },
@@ -223,7 +223,7 @@ function updateSchema(items){
 /* ---------------- SEARCH ---------------- */
 function normalize(s){ return s.toLowerCase().normalize('NFKD'); }
 function filterItems(term){
-  const t = normalize(term);
+  const t = normalize(term).trim();
   return CONFIG.faqs.filter(it=>{
     const inTag = !activeTag || (it.tags||[]).includes(activeTag);
     if(!inTag) return false;
@@ -316,6 +316,7 @@ function render(){
 }
 
 window.addEventListener('DOMContentLoaded', ()=>{
+  $('#search').value = "";                    // ensure empty
   renderMeta();
   render();
   $('#copyLink').addEventListener('click', copyLink);
