@@ -126,13 +126,13 @@ const CONFIG = {
     issuesUrl: "",
     mailto: "mailto:tomas@jurkevicius.lt?subject=Trip%20Question&body=Hi%20Tom,%5Cn%5BWrite%20your%20question%20here%5D",
   },
-  tags: ["Itinerary","Driving","Gear","Safety","Dogs","Cats"],
+  tags: ["itinerary","driving","gear","safety","dogs","cats"],
   faqs: [
-    { q: "Why Poland or Slovakia?", a: "Italy is hosting the Olympics so prices are high. Poland/Slovakia offer a big cost drop for five people driving instead of flights.", tags:["Itinerary"] },
-    { q: "How are we going?", a: "By car. Two cars for five people. One car can carry gear, the other can focus on passengers. Roof rack and ski bag available for equipment.", tags:["Driving","Gear"] },
-    { q: "Not experienced in skiing?", a: "No problem. We can schedule a couple of sessions at Liepkalnis before the trip.", tags:["Safety"] },
-    { q: "Cats?", a: "Suradau gera puslapi kur galima pasiziuret kates", tags:["Cats"] },
-    { q: "Dogs?", a: "O ka suniuks daro", tags:["Dogs"] }
+    { q: "Why Poland or Slovakia?", a: "Italy is hosting the Olympics so prices are high. Poland/Slovakia offer a big cost drop for five people driving instead of flights.", tags:["itinerary"] },
+    { q: "How are we going?", a: "By car. Two cars for five people. One car can carry gear, the other can focus on passengers. Roof rack and ski bag available for equipment.", tags:["driving","gear"] },
+    { q: "Not experienced in skiing?", a: "No problem. We can schedule a couple of sessions at Liepkalnis before the trip.", tags:["safety"] },
+    { q: "Cats?", a: "Suradau gera puslapi kur galima pasiziuret kates", tags:["cats"] },
+    { q: "Dogs?", a: "O ka suniuks daro dogs", tags:["dogs"] }
   ],
   catApiKey: "live_16Hv1o9LsN15pMRvCTfrtutpPBF3QcJA3gcWuciia9DFN9FjOdJvPyM8o072Ogd4",
   dogApiKey: "live_BLk8jVL692KuTWWw4bxLGm8zkLQUVRFbzFjiQnLjWAlH88kKcEiCnTMeiho9WG7C"
@@ -189,20 +189,63 @@ function renderFAQ(items){
     const head = $(".q", card);
     const ans = $(".a", card);
 
-   head.addEventListener('click', ()=>{
-  const open = card.classList.toggle('open');
-  head.setAttribute('aria-expanded', open);
+    head.addEventListener('click', ()=>{
+      const open = card.classList.toggle('open');
+      head.setAttribute('aria-expanded', open);
 
-  const hasTag = (tags, name) => (tags||[]).some(t => t.toLowerCase() === name.toLowerCase());
+      if(open && (item.tags||[]).includes("cats")){
+        if(!ans.dataset.catLoaded){ loadCatInto(ans); ans.dataset.catLoaded = "1"; }
+      }
+      if(open && (item.tags||[]).includes("dogs")){
+        if(!ans.dataset.dogLoaded){ loadDogInto(ans); ans.dataset.dogLoaded = "1"; }
+      }
+    });
 
-  if(open && hasTag(item.tags,"cats")){
-  if(!ans.dataset.catLoaded){ loadCatInto(ans); }
+    list.appendChild(card);
+  });
+  $("#empty").classList.toggle('show', items.length===0);
+  updateSchema(items);
+}
+
+  const list = $("#faq");
+  list.innerHTML = '';
+  items.forEach((item, idx)=>{
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="q" role="button" aria-expanded="false" aria-controls="a-${idx}">
+        <h3>${escape(item.q)}</h3>
+        ${item.tags && item.tags[0] ? `<span class="tag">${escape(item.tags[0])}</span>` : ''}
+      </div>
+      <div class="a" id="a-${idx}">${escape(item.a)}</div>
+    `;
+    const head = $(".q", card);
+    const ans = $(".a", card);
+
+    head.addEventListener('click', ()=>{
+      const open = card.classList.toggle('open');
+      head.setAttribute('aria-expanded', open);
+
+      // Load cat on first open of a cats-tagged item
+      if(open && (item.tags||[]).includes("cats")){
+        if(!ans.dataset.catLoaded){
+          loadCatInto(ans);
+          ans.dataset.catLoaded = "1";
+        }
+      }
+    });
+    if(open && (item.tags||[]).includes("cats")){
+  if(!ans.dataset.catLoaded){
+    loadCatInto(ans);
+    ans.dataset.catLoaded = "1";
   }
-  if(open && hasTag(item.tags,"dogs")){
-    if(!ans.dataset.dogLoaded){ loadDogInto(ans); }
+}
+if(open && (item.tags||[]).includes("dogs")){
+  if(!ans.dataset.dogLoaded){
+    loadDogInto(ans);
+    ans.dataset.dogLoaded = "1";
   }
-
-  }); 
+};
 
 
     list.appendChild(card);
@@ -227,7 +270,7 @@ function updateSchema(items){
 /* ---------------- SEARCH ---------------- */
 function normalize(s){ return s.toLowerCase().normalize('NFKD'); }
 function filterItems(term){
-  const t = normalize(term).trim();
+  const t = normalize(term);
   return CONFIG.faqs.filter(it=>{
     const inTag = !activeTag || (it.tags||[]).includes(activeTag);
     if(!inTag) return false;
@@ -261,28 +304,32 @@ function flash(msg, isErr){
   document.body.appendChild(el); setTimeout(()=>el.remove(), 1800);
 }
 
-/* ---------------- CAT & DOG API ---------------- */
+/* ---------------- CAT API ---------------- */
 async function loadCatInto(container){
-  container.innerHTML = `<div style="margin:8px 0">Loading cat…</div>`;
+  container.innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin:8px 0 12px">
+    <span>Loading cat…</span>
+  </div>`;
   try{
     const headers = { "Accept": "application/json" };
     if (CONFIG.catApiKey) headers["x-api-key"] = CONFIG.catApiKey;
-    const res = await fetch("https://api.thecatapi.com/v1/images/search?mime_types=jpg,png", { headers });
+    const res = await fetch("https://api.thecatapi.com/v1/images/search", { headers });
     const data = await res.json();
-    const url = data?.[0]?.url;
+    const url = data && data[0] && data[0].url ? data[0].url : null;
     if(!url) throw new Error("No image");
     container.innerHTML = `
       <div style="display:flex;justify-content:center">
         <img src="${url}" alt="Cat" style="max-width:100%;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.3)">
       </div>
-      <div style="margin-top:12px"><button class="btn" id="nextCatBtn">New cat</button></div>`;
-    container.querySelector('#nextCatBtn').addEventListener('click', ()=> loadCatInto(container));
-    container.dataset.catLoaded = "1";           // set only on success
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn" id="nextCatBtn">New cat</button>
+      </div>`;
+    const btn = container.querySelector('#nextCatBtn');
+    btn.addEventListener('click', ()=> loadCatInto(container));
   }catch(e){
-    console.error(e);
     container.innerHTML = `<span style="color:var(--muted)">Failed to load cat.</span>
       <div style="margin-top:8px"><button class="btn" id="retryCatBtn">Retry</button></div>`;
-    container.querySelector('#retryCatBtn').addEventListener('click', ()=> loadCatInto(container));
+    const rb = container.querySelector('#retryCatBtn');
+    rb.addEventListener('click', ()=> loadCatInto(container));
   }
 }
 async function loadDogInto(container){
@@ -290,7 +337,7 @@ async function loadDogInto(container){
   try{
     const headers = { "Accept": "application/json" };
     if (CONFIG.dogApiKey) headers["x-api-key"] = CONFIG.dogApiKey;
-    const res = await fetch("https://api.thedogapi.com/v1/images/search?mime_types=jpg,png", { headers });
+    const res = await fetch("https://api.thedogapi.com/v1/images/search", { headers });
     const data = await res.json();
     const url = data?.[0]?.url;
     if(!url) throw new Error("No image");
@@ -299,13 +346,11 @@ async function loadDogInto(container){
         <img src="${url}" alt="Dog" style="max-width:100%;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.3)">
       </div>
       <div style="margin-top:12px"><button class="btn" id="nextDogBtn">New dog</button></div>`;
-    container.querySelector('#nextDogBtn').addEventListener('click', ()=> loadDogInto(container));
-    container.dataset.dogLoaded = "1";           // set only on success
+    container.querySelector("#nextDogBtn").addEventListener("click", ()=> loadDogInto(container));
   }catch(e){
-    console.error(e);
     container.innerHTML = `<span style="color:var(--muted)">Failed to load dog.</span>
       <div><button class="btn" id="retryDogBtn">Retry</button></div>`;
-    container.querySelector('#retryDogBtn').addEventListener('click', ()=> loadDogInto(container));
+    container.querySelector("#retryDogBtn").addEventListener("click", ()=> loadDogInto(container));
   }
 }
 
@@ -318,7 +363,6 @@ function render(){
 }
 
 window.addEventListener('DOMContentLoaded', ()=>{
-  $('#search').value = "";                    // ensure empty
   renderMeta();
   render();
   $('#copyLink').addEventListener('click', copyLink);
