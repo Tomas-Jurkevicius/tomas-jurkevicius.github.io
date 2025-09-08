@@ -207,53 +207,6 @@ function renderFAQ(items){
   updateSchema(items);
 }
 
-  const list = $("#faq");
-  list.innerHTML = '';
-  items.forEach((item, idx)=>{
-    const card = document.createElement('article');
-    card.className = 'card';
-    card.innerHTML = `
-      <div class="q" role="button" aria-expanded="false" aria-controls="a-${idx}">
-        <h3>${escape(item.q)}</h3>
-        ${item.tags && item.tags[0] ? `<span class="tag">${escape(item.tags[0])}</span>` : ''}
-      </div>
-      <div class="a" id="a-${idx}">${escape(item.a)}</div>
-    `;
-    const head = $(".q", card);
-    const ans = $(".a", card);
-
-    head.addEventListener('click', ()=>{
-      const open = card.classList.toggle('open');
-      head.setAttribute('aria-expanded', open);
-
-      // Load cat on first open of a cats-tagged item
-      if(open && (item.tags||[]).includes("cats")){
-        if(!ans.dataset.catLoaded){
-          loadCatInto(ans);
-          ans.dataset.catLoaded = "1";
-        }
-      }
-    });
-    if(open && (item.tags||[]).includes("cats")){
-  if(!ans.dataset.catLoaded){
-    loadCatInto(ans);
-    ans.dataset.catLoaded = "1";
-  }
-}
-if(open && (item.tags||[]).includes("dogs")){
-  if(!ans.dataset.dogLoaded){
-    loadDogInto(ans);
-    ans.dataset.dogLoaded = "1";
-  }
-};
-
-
-    list.appendChild(card);
-  });
-  $("#empty").classList.toggle('show', items.length===0);
-  updateSchema(items);
-}
-
 function updateSchema(items){
   const data = {
     '@context':'https://schema.org',
