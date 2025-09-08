@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Trip Q&A</title>
+  <title>Trip Q&amp;A</title>
   <meta name="description" content="Quick answers for friends about the upcoming trip." />
   <meta name="theme-color" content="#0ea5e9">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -81,7 +81,7 @@
 <body>
   <header>
     <div class="hero">
-      <h1>Trip Q&A</h1>
+      <h1>Trip Q&amp;A</h1>
       <p class="sub">Fast answers for friends. Search below or open a question. This page is lightweight, mobile-first, and works offline after first load.</p>
       <div class="meta">
         <div class="pill" id="tripDates">Dates: set in config</div>
@@ -152,8 +152,8 @@ function renderMeta(){
   $("#tripLocation").textContent = `Location: ${CONFIG.trip.location}`;
   const d = new Date();
   $("#lastUpdated").textContent = `Updated: ${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  document.title = CONFIG.trip.title || "Trip Q&A";
-  $("h1").textContent = CONFIG.trip.title || "Trip Q&A";
+  document.title = CONFIG.trip.title || "Trip Q&amp;A";
+  $("h1").textContent = CONFIG.trip.title || "Trip Q&amp;A";
 }
 
 function renderFilters(){
@@ -161,13 +161,14 @@ function renderFilters(){
   wrap.innerHTML = '';
   const all = document.createElement('button');
   all.className = 'chip' + (!activeTag ? ' active' : '');
-  all.textContent = 'all';
+  all.textContent = 'All';
   all.onclick = ()=>{ activeTag=null; render(); };
   wrap.appendChild(all);
+
   CONFIG.tags.forEach(t=>{
     const b = document.createElement('button');
     b.className = 'chip' + (activeTag===t ? ' active' : '');
-    b.textContent = t;
+    b.textContent = t.charAt(0).toUpperCase() + t.slice(1);
     b.onclick = ()=>{ activeTag = activeTag===t? null : t; render(); };
     wrap.appendChild(b);
   });
@@ -182,7 +183,9 @@ function renderFAQ(items){
     card.innerHTML = `
       <div class="q" role="button" aria-expanded="false" aria-controls="a-${idx}">
         <h3>${escape(item.q)}</h3>
-        ${item.tags && item.tags[0] ? `<span class="tag">${escape(item.tags[0])}</span>` : ''}
+        ${item.tags && item.tags[0] ? 
+          `<span class="tag">${escape(item.tags[0].charAt(0).toUpperCase() + item.tags[0].slice(1))}</span>` 
+          : ''}
       </div>
       <div class="a" id="a-${idx}">${escape(item.a)}</div>
     `;
@@ -200,53 +203,6 @@ function renderFAQ(items){
         if(!ans.dataset.dogLoaded){ loadDogInto(ans); ans.dataset.dogLoaded = "1"; }
       }
     });
-
-    list.appendChild(card);
-  });
-  $("#empty").classList.toggle('show', items.length===0);
-  updateSchema(items);
-}
-
-  const list = $("#faq");
-  list.innerHTML = '';
-  items.forEach((item, idx)=>{
-    const card = document.createElement('article');
-    card.className = 'card';
-    card.innerHTML = `
-      <div class="q" role="button" aria-expanded="false" aria-controls="a-${idx}">
-        <h3>${escape(item.q)}</h3>
-        ${item.tags && item.tags[0] ? `<span class="tag">${escape(item.tags[0])}</span>` : ''}
-      </div>
-      <div class="a" id="a-${idx}">${escape(item.a)}</div>
-    `;
-    const head = $(".q", card);
-    const ans = $(".a", card);
-
-    head.addEventListener('click', ()=>{
-      const open = card.classList.toggle('open');
-      head.setAttribute('aria-expanded', open);
-
-      // Load cat on first open of a cats-tagged item
-      if(open && (item.tags||[]).includes("cats")){
-        if(!ans.dataset.catLoaded){
-          loadCatInto(ans);
-          ans.dataset.catLoaded = "1";
-        }
-      }
-    });
-    if(open && (item.tags||[]).includes("cats")){
-  if(!ans.dataset.catLoaded){
-    loadCatInto(ans);
-    ans.dataset.catLoaded = "1";
-  }
-}
-if(open && (item.tags||[]).includes("dogs")){
-  if(!ans.dataset.dogLoaded){
-    loadDogInto(ans);
-    ans.dataset.dogLoaded = "1";
-  }
-};
-
 
     list.appendChild(card);
   });
